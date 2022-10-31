@@ -1,5 +1,6 @@
 fastapi
 uvicorn
 motor
-guicorn
-# pymongo
+gunicorn
+mangum
+# pymongo[srv]
