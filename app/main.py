@@ -16,10 +16,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-# @app.get('/')
-# def test():
-#     return {"Ping": "Pong"}
-
 app.include_router(api_router)
 
 handler = Mangum(app)
