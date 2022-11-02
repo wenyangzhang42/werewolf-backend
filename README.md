@@ -7,7 +7,7 @@
 
 
 ### How to run locally:
-  in rood directory, run `sh start.sh`
+  in root directory, run `sh start.sh`
 
 ### Notes:
 * This project is **NOT FINISHED**, still in development.
@@ -16,17 +16,17 @@
 
 
 ### Known bugs:  
+- checking
 
-
-### Todo:
+### Todos:
 * re-initialize and restart logic, check if game on going.
   maybe if game on going, ask user to confirm, then reset game.
 * Exception Handling, different level handlers
   Use api_exception and HTTPexception template
 
 
-### improvements:
-* Add support to Thief
+### future improvements:
+* Add support to role: Thief
 * Host more than one games at the same time
 * Support uncommon game sets
 * Cache, maybe multi layer Cache
