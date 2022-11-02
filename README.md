@@ -30,5 +30,6 @@
 * Host more than one games at the same time
 * Support uncommon game sets
 * Cache, maybe multi layer Cache
+* Should I support re-seat? will need to figure out how to do role assignment.
 
     

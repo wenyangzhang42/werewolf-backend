@@ -9,6 +9,4 @@ def setup_game(roles: list):
         logger.error("Error setting roles for the game!", e)
         logger.error(roles)
         return 500, {"message": "Cannot set roles for the game!", "error": e}
-
-    gi.set_nbr_of_players(len(roles))
     return 200, {"message": f"game setup with roles: {str(roles)}"}

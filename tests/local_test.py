@@ -20,4 +20,14 @@ roles = [
 ]
 
 
-# (status, msg) = setup_game(roles)
+def set_test_players():
+    base_ip = '192.168.0.'
+    count = 0
+    global roles
+    for i in range(1, len(roles)):
+        gi.set_player(i, base_ip+str(i))
+
+
+(status, msg) = setup_game(roles)
+set_test_players()
+gi.debug_print()
