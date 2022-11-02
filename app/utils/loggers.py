@@ -8,10 +8,10 @@ def get_logger(name: str = "logger"):
                                   "%Y-%m-%d %H:%M:%S")
 
     new_logger.setLevel(logging.DEBUG)
-    dev_fh = logging.FileHandler('logs/{:%Y-%m-%d}-dev.log'.format(datetime.now()))
+    dev_fh = logging.FileHandler('./logs/{:%Y-%m-%d}-dev.log'.format(datetime.now()))
     dev_fh.setLevel(logging.DEBUG)
     dev_fh.setFormatter(formatter)
-    game_fh2 = logging.FileHandler('logs/{:%Y-%m-%d}-game.log'.format(datetime.now()))
+    game_fh2 = logging.FileHandler('./logs/{:%Y-%m-%d}-game.log'.format(datetime.now()))
     game_fh2.setLevel(logging.INFO)
     game_fh2.setFormatter(formatter)
     new_logger.addHandler(dev_fh)

@@ -1,36 +1,64 @@
 import random
 
-from app.models.game_infos import game_info_model, night_info_model
+from app.models.game_infos import game_info_model, night_info_model, every_night_order, first_night_order
 from app.models.player import Player
+from app.utils.info_utils import validate_roles
 from app.utils.other_utils import find_alignment
 from app.utils.loggers import logger
 
 
 nbr_of_players = 0
+game_on_going = False
 game_start_datetime = None
 roles = []
 players = []
 game_info = game_info_model.copy()
 night_info = night_info_model.copy()
 
+cur_every_night_order = []
+cur_first_night_order = []
 
-def reset():
-    global nbr_of_players, roles, players, game_info, night_info
+
+def setup(role_list: list):
+    (validated, msg) = validate_roles(role_list)
+    if not validated:
+        raise Exception(msg)
+
+    global roles, cur_first_night_order, cur_every_night_order
+    roles = role_list.copy()
+    random.shuffle(roles)
+    for role in first_night_order:
+        if role in roles:
+            cur_first_night_order.append(role)
+    for role in every_night_order:
+        if role in roles:
+            cur_every_night_order.append(role)
+    logger.debug(f"successfully set roles {roles}")
+    logger.debug(f"successfully set first night order: {cur_first_night_order}")
+    logger.debug(f"successfully set every night order: {cur_every_night_order}")
+
+
+def reset() -> None:
+    global nbr_of_players, game_on_going, game_start_datetime, roles, players, \
+        game_info, night_info, cur_first_night_order, cur_every_night_order
     nbr_of_players = 0
+    game_on_going = False
+    game_start_datetime = None
     roles = []
     players = []
+
     game_info = game_info_model.copy()
     night_info = night_info_model.copy()
+    cur_first_night_order = []
+    cur_every_night_order = []
 
-    logger.warning("Game re-initialized!")
-    return 200, "Game ended, please setup game to play!"
+    logger.debug("Game successfully reset.")
 
 
-def restart():
+def restart() -> None:
     global nbr_of_players
     if nbr_of_players == 0:
-        return 500, "game is not setup, cannot restart."
-        logger.warning("Cannot start game before setup")
+        raise Exception("Cannot restart game, Game not set up.")
     else:
         global roles, players, game_info, night_info
         random.shuffle(roles)
@@ -41,21 +69,8 @@ def restart():
             game_info = game_info_model.copy()
             night_info = night_info_model.copy()
         except Exception as e:
-            logger.error("Unknown Error resetting player roles and status.")
-            return 500, "Unknown Error resetting player roles and status."
-        logger.warning("Game has been reset without changing setups!")
-        return 200, "Players' roles shuffled, You may start another game now!"
-
-
-def set_roles(role_list: list):
-    if role_list is None or len(role_list) == 0:
-        logger.warning("Empty or Null input for roles list.")
-        return 500, "Input roles list is empty!"
-    global roles
-    roles = role_list.copy()
-    random.shuffle(roles)
-    logger.info("Game roles set: " + str(roles))
-    return 200, "Game roles set."
+            raise Exception("Unknown Error resetting player roles and status.")
+        logger.debug("Game has been reset without changing setups!")
 
 
 def set_nbr_of_players(count: int):
@@ -76,19 +91,15 @@ def set_night_info(field, value):
 def set_player(seat: int, ip: str):
     global nbr_of_players, players
     if nbr_of_players == 0:
-        logger.warning("Player " + ip + " tried to pick seat " + seat + " when game is not set up.")
-        return 500, "Game has not been setup yet."
+        raise Exception(" Game has not been setup yet.")
     try:
         if players[seat-1] is not None:
-            logger.warning("Player " + ip + " tried to pick seat " + seat + " which is already taken.")
-            return 500, "Seat has been taken."
+            raise Exception(f"Seat {seat} has been taken.")
         else:
             role = roles[seat - 1]
             alignment = find_alignment(role)
             player = Player(ip, seat, role, alignment)
             player[seat-1] = player
-            logger.info("Player " + ip + " seated at seat " + str(seat))
-            return 200, "player seated at seat " + str(seat)
+            logger.debug("Player " + ip + " seated at seat " + str(seat))
     except Exception as e:
-        logger.error("Player " + ip + " tried to pick seat " + seat + " available seats are 1-" + str(nbr_of_players))
-        return 500, "seat number out of range. please pick seat between 1-"+str(nbr_of_players)
+        raise Exception(f"Error set player {ip} at seat {seat}. exception: {e}")

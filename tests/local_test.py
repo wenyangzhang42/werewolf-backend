@@ -1,7 +1,7 @@
 from app.utils.loggers import logger
-from app.models.roles_enums import Gods, Werewolves, Villagers
+from app.models.roles_enums import Alignment, Gods, Werewolves, Villagers, FenceSitters
 import app.services.game_info as gi
-from app.services.game import game_setup
+from app.services.game import setup_game
 
 logger.debug("Debug test started")
 
@@ -12,7 +12,7 @@ roles = [
 
     Gods.SEER,
     Gods.WITCH,
-    Gods.GUARD,
+    Gods.HUNTER,
 
     Werewolves.WEREWORLF,
     Werewolves.WEREWORLF,
@@ -20,5 +20,4 @@ roles = [
 ]
 
 
-(status, msg) = game_setup(roles)
-
+# (status, msg) = setup_game(roles)
