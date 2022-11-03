@@ -25,7 +25,7 @@ def test(roles):
 
 
 @router.get('/setup')
-def setup(roles: list, request: Request):
+def setup(roles: str, request: Request):
     roles = roles.split(',')
     (code, result) = setup_game(roles)
     if "error" in result:
@@ -33,3 +33,9 @@ def setup(roles: list, request: Request):
         api_exception(status_code=code, error_message=result['message'])
     else:
         return api_response(result)
+
+
+@router.get('/sit/{seat}')
+def set_player(seat: int, request:Request):
+    ip = request.client.host
+
