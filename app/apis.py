@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, HTTPException
 
 from app.services.game import setup_game
 from app.utils.response_utils import api_response, api_exception
-from app.utils.loggers import logger
+from app.utils.log_utils import logger
 
 logger_agent = 'Router'
 
@@ -32,7 +32,7 @@ def setup(roles: str, request: Request):
         logger.exception(result["error"])
         api_exception(status_code=code, error_message=result['message'])
     else:
-        return api_response(result)
+        return api_response(result, code)
 
 
 @router.get('/sit/{seat}')

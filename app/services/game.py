@@ -1,4 +1,5 @@
-from app.utils.loggers import logger
+from app.utils.log_utils import logger
+from app.utils.game_utils import invoke
 import app.services.game_info as gi
 
 
@@ -46,19 +47,57 @@ def set_player(seat: int, ip: str):
     return 200, {"message": f"player {ip} sit on seat {seat}"}
 
 
-def use_ability(target: int, ip: str):
+def use_ability(target: int, ip: str, *args):
     if not gi.game_is_configured():
         return 404, {"message": "Error using role ability!", "error": "game is not configured!"}
     try:
+        targets = [target]
+        if args is not None and len(args) != 0:
+            for arg in args:
+                targets.append(arg)
+
         player = gi.find_player(ip)
+
         if player.status != "alive":
             return 403, {"message": f"You are {player.status}. Please wait for others to finish the game."}
         stage = gi.get_stage()
+
         if stage != player.role:
             logger.warning(f"player {player.seat} trying to use skill where current stage is {stage}")
             return 403, {"message": "It is not your turn or you don't have an ability!", "error": "It is not your turn"}
         else:
-            # todo: call abilities functions
-            pass
+            eval_result = invoke(player.role, player.seat, targets)
+            return 200, {"message": eval_result}
+
     except Exception as e:
-        return 500, {"message": "Error setting player!", "error": e}
+        return 500, {"message": f"Error suing ability!", "error": e}
+
+
+# Game Process Handlers
+def move_to_next_stage():
+    try:
+        next_stage = gi.move_to_next_stage()
+        return 200, {"message": next_stage}
+    except Exception as e:
+        return 500, {"message": f"Error moving to next stage!", "error": e}
+
+
+def get_night_info():
+    if not gi.game_is_configured():
+        return 404, {"message": "Error using role ability!", "error": "game is not configured!"}
+    try:
+        night_info = gi.get_night_info()
+        return 200, night_info
+    except Exception as e:
+        return 500, {"message": f"Error getting last night info!", "error": e}
+
+
+# todo: user input what happened during the day.
+def day_info():
+    pass
+
+
+# todo: a new night begins
+def night_begins():
+    pass
+

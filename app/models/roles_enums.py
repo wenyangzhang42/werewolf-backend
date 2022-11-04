@@ -6,7 +6,7 @@ class Alignment(str, Enum):
     VILLAGER = "villager"
     WEREWOLF = "werewolf"
     LOVERS = "lovers"
-    IRRELEVANT = "irrelevant"
+    FENCESITTER = "fencesitter"
 
     @classmethod
     def has_value(cls, value):

@@ -5,7 +5,7 @@ def find_alignment(role: str) -> str:
     if Gods.has_value(role):
         return Alignment.GOD
     elif FenceSitters.has_value(role):
-        return Alignment.IRRELEVANT
+        return Alignment.FENCESITTER
     elif Werewolves.has_value(role):
         return Alignment.WEREWOLF
     elif Villagers.has_value(role):

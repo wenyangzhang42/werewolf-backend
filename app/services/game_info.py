@@ -1,8 +1,9 @@
 import random
 
-from app.models.game_infos import game_info_model, night_info_model, every_night_order_model, first_night_order_model
+from app.models.game_infos import game_info_model, night_info_model, public_night_info_model, \
+    every_night_order_model, first_night_order_model
 from app.models.player import Player
-from app.utils.loggers import logger
+from app.utils.log_utils import logger
 from app.utils.info_utils import validate_roles, find_alignment
 
 # parameters for the room
@@ -16,10 +17,13 @@ players = []
 game_on_going = False
 game_start_datetime = None
 game_info = game_info_model.copy()
+
+# parameters for each night
 night_info = night_info_model.copy()
+public_night_info = public_night_info_model.copy()
 
 
-def setup(roles_to_set: list):
+def setup(roles_to_set: list) -> None:
     (validated, msg) = validate_roles(roles_to_set)
     if not validated:
         raise Exception(msg)
@@ -29,8 +33,8 @@ def setup(roles_to_set: list):
     if nbr_of_players != 0:
         reset()  # maybe a better way is to reset params for each game here.
 
-    global roles, players, first_night_order, every_night_order, \
-        game_info, night_info, game_on_going, game_start_datetime
+    global roles, players, first_night_order, every_night_order
+
     roles = roles_to_set.copy()
     random.shuffle(roles)
     for role in first_night_order_model:
@@ -49,7 +53,7 @@ def setup(roles_to_set: list):
 
 
 def restart() -> None:
-    global roles, players, game_info, night_info, game_on_going, game_start_datetime
+    global roles, players, game_info, night_info, public_night_info, game_on_going, game_start_datetime
     random.shuffle(roles)
     game_on_going = False
     game_start_datetime = None
@@ -59,6 +63,7 @@ def restart() -> None:
             players[i].set_status("alive")
         game_info = game_info_model.copy()
         night_info = night_info_model.copy()
+        public_night_info = public_night_info_model.copy()
     except Exception as e:
         raise Exception("Unknown Error resetting player roles and status.")
     logger.debug("Game has been reset without changing setups!")
@@ -66,7 +71,7 @@ def restart() -> None:
 
 def reset() -> None:
     global roles, players, nbr_of_players, first_night_order, every_night_order,\
-        game_info, night_info, game_on_going, game_start_datetime
+        game_info, night_info, public_night_info, game_on_going, game_start_datetime
     nbr_of_players = 0
     game_on_going = False
     game_start_datetime = None
@@ -75,23 +80,24 @@ def reset() -> None:
 
     game_info = game_info_model.copy()
     night_info = night_info_model.copy()
+    public_night_info = public_night_info_model.copy()
     first_night_order = []
     every_night_order = []
 
     logger.debug("Game successfully reset.")
 
 
-def set_game_info(field, value):
+def set_game_info(field, value) -> None:
     global game_info
     game_info[field] = value
 
 
-def set_night_info(field, value):
+def set_night_info(field, value) -> None:
     global night_info
     night_info[field] = value
 
 
-def set_player(seat: int, ip: str):
+def set_player(seat: int, ip: str) -> None:
     global players
     current_player = find_player(ip)
     if current_player is not None:
@@ -109,8 +115,45 @@ def set_player(seat: int, ip: str):
         raise Exception(f"Unknown error set player {ip} at seat {seat}. exception: {e}")
 
 
+def move_to_next_stage() -> str:
+    stage_index = night_info["stage"]
+
+    if (game_info["round"] == 1 and stage_index == len(first_night_order)-1) or \
+            (game_info["round"] != 1 and stage_index == len(every_night_order)-1):
+        # night is over
+        night_info["stage"] = -1  # reset stage index
+        # todo: maybe call night over function
+    else:
+        night_info["stage"] += 1
+
+    return get_stage()
+
+
+def get_night_info():
+    stage = get_stage()
+    if stage == "day":
+        return public_night_info
+    else:
+        raise Exception("You can only check last night info during day time.")
+
+
+# todo: night over, do what need to be done
+def night_over():
+    # todo: final death
+    # todo: win_check
+    pass
+
+
+# todo: new night begins, clear and reset data
+def new_night():
+    # todo: reset night data: nigh_info, public_night_info
+    # todo: maybe win_check
+    # todo: maybe move_to_next_stage
+    pass
+
+
 # Helper functions
-def find_player(ip: str):
+def find_player(ip: str) -> Player:
     global players
     for player in players:
         if player is not None and player.ip == ip:
@@ -122,19 +165,22 @@ def get_stage() -> str:
     global game_info, night_info
     if game_info.get("round") == 0:
         raise Exception("Game not set or game not started!")
-    elif game_info.get("round") == 1:
-        global first_night_order
-        return first_night_order[night_info.get("stage")]
     else:
-        global every_night_order
-        return every_night_order[night_info.get("stage")]
+        stage_index = night_info.get("stage")
+        if stage_index == -1:
+            return "day"
+        elif game_info.get("round") == 1:
+            global first_night_order
+            return first_night_order[stage_index]
+        else:
+            global every_night_order
+            return every_night_order[stage_index]
 
 
 def game_is_configured() -> bool:
     global nbr_of_players
     if nbr_of_players == 0:
         return False
-        # raise Exception("Game is not configured yet!")
     return True
 
 

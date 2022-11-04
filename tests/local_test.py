@@ -1,7 +1,8 @@
-from app.utils.loggers import logger
+from app.utils.log_utils import logger
+from app.utils.game_utils import invoke
 from app.models.roles_enums import Alignment, Gods, Werewolves, Villagers, FenceSitters
 import app.services.game_info as gi
-from app.services.game import setup_game
+import app.services.game as game
 
 logger.debug("Debug test started")
 
@@ -28,6 +29,16 @@ def set_test_players():
         gi.set_player(i, base_ip+str(i))
 
 
-# (status, msg) = setup_game(roles)
+# (status, msg) = game.setup_game(roles)
 # set_test_players()
-gi.debug_print()
+# gi.debug_print()
+
+s = {"a":123, "b":456}
+
+print(s.get("a"))
+s.update({"c": 123})
+s.update({"a": 345678})
+
+print(s)
+
+
