@@ -1,4 +1,17 @@
-from app.models.roles_enums import Gods, Werewolves, FenceSitters, Villagers
+from app.models.roles_enums import Alignment, Gods, Werewolves, FenceSitters, Villagers
+
+
+def find_alignment(role: str) -> str:
+    if Gods.has_value(role):
+        return Alignment.GOD
+    elif FenceSitters.has_value(role):
+        return Alignment.FENCESITTER
+    elif Werewolves.has_value(role):
+        return Alignment.WEREWOLF
+    elif Villagers.has_value(role):
+        return Alignment.VILLAGER
+    else:
+        return "role Error"
 
 
 def validate_roles(roles: list):
@@ -7,14 +20,10 @@ def validate_roles(roles: list):
     else:
         for role in roles:
             if(
-                not Gods.has_value(roles)
-                and not Werewolves.has_value(roles)
-                and not FenceSitters.has_value(roles)
-                and not Villagers.has_value(roles)
+                not Gods.has_value(role)
+                and not Werewolves.has_value(role)
+                and not FenceSitters.has_value(role)
+                and not Villagers.has_value(role)
             ):
                 return False, f"{role} contains typo or this role is not supported yet."
         return True, "roles are good!"
-
-
-
-
