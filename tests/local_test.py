@@ -1,3 +1,5 @@
+import random
+import copy
 from app.utils.log_utils import logger
 from app.utils.game_utils import invoke
 from app.models.roles_enums import Alignment, Gods, Werewolves, Villagers, FenceSitters
@@ -12,8 +14,10 @@ roles = [
     Villagers.VILLAGER,
 
     Gods.SEER,
-    Gods.WITCH,
-    Gods.HUNTER,
+    "witch",
+    # Gods.HUNTER,
+
+    FenceSitters.THIEF,
 
     Werewolves.WEREWORLF,
     Werewolves.WEREWORLF,
@@ -26,19 +30,9 @@ def set_test_players():
     count = 0
     global roles
     for i in range(1, len(roles)):
-        gi.set_player(i, base_ip+str(i))
+        game.set_player(i, base_ip+str(i))
 
 
-# (status, msg) = game.setup_game(roles)
-# set_test_players()
-# gi.debug_print()
-
-s = {"a":123, "b":456}
-
-print(s.get("a"))
-s.update({"c": 123})
-s.update({"a": 345678})
-
-print(s)
-
-
+(status, msg) = game.setup_game(roles)
+set_test_players()
+gi.debug_print()

@@ -5,14 +5,14 @@ from app.utils.ability_utils import add_death, remove_death
 from app.utils.info_utils import find_alignment
 
 
-def werewolf(player: int,target: int) -> str:
+def werewolf(player: int, target: int) -> str:
     gi.night_info["ww_kill"] = target
     add_death(target)
     return f"{target} killed!"
 
 
 def seer(player: int, target: int) -> str:
-    role = gi.roles[target-1]
+    role = gi.game_info.get("roles")[target-1]
     if Werewolves.has_value(role):
         return "Target Identity: BAD!"
     else:
@@ -57,7 +57,7 @@ def witch(player: int, target: int,) -> str:
             return f"You have poisoned player {target}."
 
 
-def witch_info():
+def witch_info() -> str:
     if gi.game_info["witch_save"] is None:
         return f"Player {gi.night_info['ww_kill']} was killed by werewolves tonight!"
     else:
@@ -88,26 +88,29 @@ def elder(player: int, target: int):
 
 
 def thief_info():
-    index = len(gi.roles)
-    id1 = gi.roles[index-2]
-    id2 = gi.roles[index-1]
+    temp_roles = gi.game_info.get("roles")
+    index = len(temp_roles)
+    id1 = temp_roles[index-2]
+    id2 = temp_roles[index-1]
     return {f"You can type 1 or 2 to choose between 1.{id1} and 2.{id2} !"}
 
 
+# todo: Thief role unfinished.
 def thief(player: int, target: int):
-    index = len(gi.roles)
-    role1 = gi.roles[index - 2]
-    role2 = gi.roles[index - 1]
+    temp_roles = gi.game_info.get("roles")
+    index = len(temp_roles)
+    role1 = temp_roles[index - 2]
+    role2 = temp_roles[index - 1]
     if target != 1:
         if target != 2:
             raise Exception("Invalid input, please type input 1 or 2.")
         else:
-            gi.players[player-1].role = role2
-            gi.players[player-1].alignment = find_alignment(role2)
+            gi.game_info.get("players")[player-1].role = role2
+            gi.game_info.get("players")[player-1].alignment = find_alignment(role2)
             return f"Your new identity is {role2}!"
     else:
-        gi.players[player - 1].role = role1
-        gi.players[player - 1].alignment = find_alignment(role1)
+        gi.game_info.get("players")[player - 1].role = role1
+        gi.game_info.get("players")[player - 1].alignment = find_alignment(role1)
         return f"Your new identity is {role1}!"
 
 
@@ -115,23 +118,28 @@ def cupid(player: int, target1: int, target2: int):
     gi.game_info["lover_1"] = target1
     gi.game_info["lover_2"] = target2
 
-    al_1 = gi.players[target1-1].alignment
-    al_2 = gi.players[target2-1].alignment
+    al_1 = gi.game_info.get("players")[target1-1].alignment
+    al_2 = gi.game_info.get("players")[target2-1].alignment
 
     if al_1 == Alignment.WEREWOLF:
         if al_2 == Alignment.WEREWOLF:  # bad - bad
-            gi.players[player-1].alignment = Alignment.WEREWOLF
+            gi.game_info.get("players")[player-1].alignment = Alignment.WEREWOLF
         else:  # bad - good
-            gi.players[target1-1].alignment = Alignment.LOVERS
-            gi.players[target2-1].alignment = Alignment.LOVERS
-            gi.players[player - 1].alignment = Alignment.LOVERS
+            gi.game_info.get("players")[target1-1].alignment = Alignment.LOVERS
+            gi.game_info.get("players")[target2-1].alignment = Alignment.LOVERS
+            gi.game_info.get("players")[player - 1].alignment = Alignment.LOVERS
     else:
         if al_2 == Alignment.WEREWOLF:  # good - bad
-            gi.players[target1 - 1].alignment = Alignment.LOVERS
-            gi.players[target2 - 1].alignment = Alignment.LOVERS
-            gi.players[player - 1].alignment = Alignment.LOVERS
+            gi.game_info.get("players")[target1 - 1].alignment = Alignment.LOVERS
+            gi.game_info.get("players")[target2 - 1].alignment = Alignment.LOVERS
+            gi.game_info.get("players")[player - 1].alignment = Alignment.LOVERS
         else:  # good - good
-            gi.players[player - 1].alignment = Alignment.VILLAGER
+            gi.game_info.get("players")[player - 1].alignment = Alignment.VILLAGER
+
+
+# todo: Unfinished whild_child logic
+def wild_child(player:int, target:int):
+    pass
 
 
 def test(player, target, target2):

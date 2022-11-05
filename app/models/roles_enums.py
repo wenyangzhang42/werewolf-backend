@@ -4,6 +4,7 @@ from enum import Enum
 class Alignment(str, Enum):
     GOD = "god"
     VILLAGER = "villager"
+    BOTH = "both"
     WEREWOLF = "werewolf"
     LOVERS = "lovers"
     FENCESITTER = "fencesitter"
@@ -21,7 +22,7 @@ class Gods(str, Enum):
     GUARD = "guard"
     KNIGHT = "knight"
     ELDER = "elder"
-    LITTLEGIRL = "little girl"
+    LITTLEGIRL = "littlegirl"
 
     @classmethod
     def has_value(cls, value):
@@ -31,7 +32,7 @@ class Gods(str, Enum):
 class FenceSitters(str, Enum):
     CUPID = "cupid"
     THIEF = "thief"
-    WILDCHILD = "wild child"
+    WILDCHILD = "wildchild"
 
     @classmethod
     def has_value(cls, value):
@@ -40,8 +41,8 @@ class FenceSitters(str, Enum):
 
 class Werewolves(str, Enum):
     WEREWORLF = "werewolf"
-    WHITEWOLF = "white wolf"
-    WOLFKING = "wolf king"
+    WHITEWOLF = "whitewolf"
+    WOLFKING = "wolfking"
 
     @classmethod
     def has_value(cls, value):
