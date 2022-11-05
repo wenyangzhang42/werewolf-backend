@@ -1,11 +1,11 @@
 class Player:
     ip: str
-    seat: str
+    seat: int
     role: str
     alignment: str
     status: str
 
-    def __init__(self, ip: str, seat: str, role: str, alignment: str):
+    def __init__(self, ip: str, seat: int, role: str, alignment: str):
         self.ip = ip
         self.seat = seat
         self.role = role

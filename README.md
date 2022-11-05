@@ -30,7 +30,7 @@
 
 
 ### future improvements:
-* Add support to role: Thief
+* **Add support to role: Thief**
 * Host more than one games at the same time
 * Support uncommon game sets
 * Add security feature, token, auth, etc.

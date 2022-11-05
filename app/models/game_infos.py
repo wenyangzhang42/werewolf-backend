@@ -1,13 +1,17 @@
-from app.models.roles_enums import Gods, Villagers, FenceSitters, Werewolves
+from app.models.roles_enums import Gods, FenceSitters, Werewolves
 
-# todo: decide wheather to use this or not
-setting_info_model = {
+# todo: decide whether to use this or not
+room_info_model = {
     "nbr_of_players": 0,
-    "every_night_order": [],
     "first_night_order": [],
+    "every_night_order": []
 }
 
 game_info_model = {
+    "roles": [],
+    "players": [],
+    "game_on_going": False,
+    "game_start_datetime": None,
     "round": 0,
     "witch_kill": None,
     "witch_save": None,
