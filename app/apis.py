@@ -57,6 +57,7 @@ def reset():
 @router.get('/sit/{seat}')
 def set_player(seat: int, request: Request):
     ip = request.client.host
+    print(ip)
 
     (code, result) = game.set_player(seat, ip)
 
