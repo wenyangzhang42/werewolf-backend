@@ -9,7 +9,7 @@ def api_response(response=None, status_code=200):
     return formatted_response
 
 
-def api_exception(status_code=500, error_message=None):
+def api_exception(status_code=500, message=None, error=None):
     error_code_map = {
         400: 'BAD_REQUEST',
         401: 'UNAUTHORIZED',
@@ -22,7 +22,10 @@ def api_exception(status_code=500, error_message=None):
     formatted_response = {
         'status_code': status_code,
         'error_code': error_code_map[status_code],
-        'error_message': error_message
+        'message': message,
+        'error': error
     }
 
-    raise HTTPException(status_code=status_code, detail=formatted_response)
+    return formatted_response
+
+    # raise HTTPException(status_code=status_code, detail=formatted_response)

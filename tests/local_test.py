@@ -33,6 +33,6 @@ def set_test_players():
         game.set_player(i, base_ip+str(i))
 
 
-(status, msg) = game.setup_game(roles)
-set_test_players()
-gi.debug_print()
+# (status, msg) = game.setup_game(roles)
+# set_test_players()
+# gi.debug_print()

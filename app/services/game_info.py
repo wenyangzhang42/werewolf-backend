@@ -50,7 +50,6 @@ def setup(input_roles: list[str]) -> None:
 
     room_info.update({"nbr_of_players": n_players})
     game_info.update({"players": [None]*n_players})
-    print(game_info.get("players"))
 
     logger.debug(f"successfully set roles {game_info.get('roles')}")
     logger.debug(f"successfully set first night order: {room_info.get('first_night_order')}")
@@ -64,16 +63,27 @@ def restart() -> None:
 
     global game_info, night_info, public_night_info
 
-    random.shuffle(game_info.get("roles"))
+    if None in game_info.get("players"):
+        index = game_info.get("players").index(None)
+        raise Exception(f"Cannot start game because seat {index+1} is not seated!")
 
-    for i in range(room_info_model.get("nbr_of_players")):
-        game_info["players"][i].set_role(game_info.get("roles")[i])
+    temp_roles = copy.deepcopy(game_info.get("roles"))
+    random.shuffle(temp_roles)
+
+    for i in range(room_info.get("nbr_of_players")):
+        game_info["players"][i].set_role(temp_roles[i])
         game_info["players"][i].set_status("alive")
+
+    temp_players = copy.deepcopy(game_info.get('players'))
 
     game_info = copy.deepcopy(game_info_model)
     night_info = copy.deepcopy(night_info_model)
     public_night_info = copy.deepcopy(public_night_info_model)
 
+    game_info["roles"] = temp_roles
+    game_info["players"] = temp_players
+
+    logger.info(f"Game restart, the new roles are now {game_info.get('roles')}")
     logger.debug("Game has been reset without changing setups!")
 
 
@@ -96,7 +106,7 @@ def set_player(seat: int, ip: str) -> None:
 
     current_player = find_player(ip)
     if current_player is not None:
-        raise Exception(f"You have already sit on number {current_player.seat}")
+        raise Exception(f"You have already sit on seat {current_player.seat}! ")
 
     try:
         temp_players = game_info.get("players")
@@ -110,6 +120,14 @@ def set_player(seat: int, ip: str) -> None:
             logger.debug("Player " + ip + " seated at seat " + str(seat))
     except Exception as e:
         raise Exception(f"Unknown error set player {ip} at seat {seat}. exception: {e}")
+
+
+def get_role(ip: str):
+    player = find_player(ip)
+    if player is None:
+        raise Exception("You have not seated yet!")
+    else:
+        return player.role
 
 
 # todo: start game logic
@@ -127,6 +145,30 @@ def start_game() -> str:
     game_info["round"] += 1
 
     return move_to_next_stage()
+
+
+def pre_ability_check(ip: str):
+    if not game_is_configured():
+        raise Exception("game is not configured!")
+
+    player = find_player(ip)
+
+    if player is None:
+        raise Exception("You are not seated.")
+    elif player.status != "alive":
+        return 403, {"message": f"You are {player.status}. Please wait for others to finish the game."}
+    else:
+        stage = get_stage()
+        if stage != player.role:
+            logger.warning(f"player {player.seat} trying to use skill where current stage is {stage}")
+            raise Exception("It is not your turn")
+        else:
+            global room_info
+            return {"message": "Please enter your target.",
+                    "role": player.role,
+                    "seat": player.seat,
+                    "count": room_info.get('nbr_of_players')
+                    }
 
 
 def move_to_next_stage() -> str:
