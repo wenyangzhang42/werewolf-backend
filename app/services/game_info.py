@@ -19,7 +19,7 @@ night_info = copy.deepcopy(night_info_model)
 public_night_info = copy.deepcopy(public_night_info_model)
 
 
-def setup(input_roles: list[str]) -> None:
+def setup(input_roles: list) -> None:
     (validated, msg) = validate_roles(input_roles)
     if not validated:
         raise Exception(msg)
@@ -202,7 +202,7 @@ def night_over():
         temp_players[i-1].set_status("dead")
 
 
-def new_night(exiled: list[int]) -> str:
+def new_night(exiled: list) -> str:
     if not game_is_configured():
         raise Exception("game is not configured!")
 
