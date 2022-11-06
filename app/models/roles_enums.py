@@ -43,6 +43,7 @@ class Werewolves(str, Enum):
     WEREWORLF = "werewolf"
     WHITEWOLF = "whitewolf"
     WOLFKING = "wolfking"
+    GARGOYLE = "gargoyle"
 
     @classmethod
     def has_value(cls, value):

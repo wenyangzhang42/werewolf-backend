@@ -9,18 +9,18 @@ logger_agent = 'Router'
 router = APIRouter()
 
 
-@router.get('/')
+@router.get('/room1')
 def welcome():
     result = {"message": "Welcome to Cat's Werewolf game! Please Setup to play!"}
     return api_response(result)
 
 
-@router.get('/test')
+@router.get('/room1/test')
 def test(roles):
     pass
 
 
-@router.get('/setup')
+@router.get('/room1/setup')
 def setup(roles: str, request: Request):
     roles = roles.split(',')
 
@@ -32,7 +32,7 @@ def setup(roles: str, request: Request):
         return api_response(result, code)
 
 
-@router.get('/restart')
+@router.get('/room1/restart')
 def restart():
     (code, result) = game.restart_game()
 
@@ -43,7 +43,7 @@ def restart():
         return api_response(result, code)
 
 
-@router.get('/reset')
+@router.get('/room1/reset')
 def reset():
     (code, result) = game.reset_game()
 
@@ -54,7 +54,7 @@ def reset():
         return api_response(result, code)
 
 
-@router.get('/sit/{seat}/{name}')
+@router.get('/room1/sit/{seat}/{name}')
 def set_player(seat: int, name: str):
 
     (code, result) = game.set_player(seat, name)
@@ -66,7 +66,7 @@ def set_player(seat: int, name: str):
         return api_response(result, code)
 
 
-@router.get('/role/{name}')
+@router.get('/room1/role/{name}')
 def get_role(name: str):
 
     (code, result) = game.get_role(name)
@@ -78,7 +78,7 @@ def get_role(name: str):
         return api_response(result, code)
 
 
-@router.get("/start")
+@router.get("/room1/start")
 def start_game():
     (code, result) = game.start_game()
 
@@ -89,7 +89,7 @@ def start_game():
         return api_response(result, code)
 
 
-@router.get('/pre_ability/{name}')
+@router.get('/room1/pre_ability/{name}')
 def pre_check(name: str):
 
     (code, result) = game.pre_check(name)
@@ -101,7 +101,7 @@ def pre_check(name: str):
         return api_response(result, code)
 
 
-@router.get("/ability/{player_role}/{player_seat}")
+@router.get("/room1/ability/{player_role}/{player_seat}")
 def use_ability(player_role: str, player_seat: str, targets: str, request: Request):
 
     (code, result) = game.use_ability(player_role, player_seat, targets)
@@ -116,7 +116,7 @@ def use_ability(player_role: str, player_seat: str, targets: str, request: Reque
         return api_response(result, code)
 
 
-@router.get('/night_info')
+@router.get('/room1/night_info')
 def night_info():
     (code, result) = game.get_night_info()
 
@@ -127,7 +127,7 @@ def night_info():
         return api_response(result, code)
 
 
-@router.get('/next_night')
+@router.get('/room1/next_night')
 def next_night(exiled: str, request: Request):
     (code, result) = game.next_night(exiled)
 
