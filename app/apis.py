@@ -17,20 +17,17 @@ def welcome():
 
 @router.get('/test')
 def test(roles):
-    print(type(roles))
-    print(roles)
-    ls = roles.split(",")
-    print(ls)
-    print(len(ls))
+    pass
 
 
 @router.get('/setup')
 def setup(roles: str, request: Request):
     roles = roles.split(',')
+
     (code, result) = game.setup_game(roles)
     if "error" in result:
         logger.exception(result["error"])
-        api_exception(status_code=code, error_message=result['message'])
+        return api_exception(status_code=code, message=result['message'], error=result['error'])
     else:
         return api_response(result, code)
 
@@ -41,7 +38,7 @@ def restart():
 
     if "error" in result:
         logger.exception(result["error"])
-        api_exception(status_code=code, error_message=result['message'])
+        return api_exception(status_code=code, message=result['message'], error=result['error'])
     else:
         return api_response(result, code)
 
@@ -52,7 +49,7 @@ def reset():
 
     if "error" in result:
         logger.exception(result["error"])
-        api_exception(status_code=code, error_message=result['message'])
+        return api_exception(status_code=code, message=result['message'], error=result['error'])
     else:
         return api_response(result, code)
 
@@ -65,7 +62,20 @@ def set_player(seat: int, request: Request):
 
     if "error" in result:
         logger.exception(result["error"])
-        api_exception(status_code=code, error_message=result['message'])
+        return api_exception(status_code=code, message=result['message'], error=result['error'])
+    else:
+        return api_response(result, code)
+
+
+@router.get('/role')
+def get_role(request: Request):
+    ip = request.client.host
+
+    (code, result) = game.get_role(ip)
+
+    if "error" in result:
+        logger.exception(result["error"])
+        return api_exception(status_code=code, message=result['message'], error=result['error'])
     else:
         return api_response(result, code)
 
@@ -76,20 +86,35 @@ def start_game():
 
     if "error" in result:
         logger.exception(result["error"])
-        api_exception(status_code=code, error_message=result['message'])
+        return api_exception(status_code=code, message=result['message'], error=result['error'])
     else:
         return api_response(result, code)
 
 
-@router.get("/ability")
-def use_ability(targets: str, request: Request):
+@router.get('/pre_ability')
+def pre_check(request: Request):
     ip = request.client.host
 
-    (code, result) = game.use_ability(ip, targets)
+    (code, result) = game.pre_check(ip)
 
     if "error" in result:
         logger.exception(result["error"])
-        api_exception(status_code=code, error_message=result['message'])
+        return api_exception(status_code=code, message=result['message'], error=result['error'])
+    else:
+        return api_response(result, code)
+
+
+@router.get("/ability/{player_role}/{player_seat}")
+def use_ability(player_role: str, player_seat: str, targets: str, request: Request):
+
+    (code, result) = game.use_ability(player_role, player_seat, targets)
+
+    print(code)
+    print(result)
+
+    if "error" in result:
+        logger.exception(result["error"])
+        return api_exception(status_code=code, message=result['message'], error=result['error'])
     else:
         return api_response(result, code)
 
@@ -100,7 +125,7 @@ def night_info():
 
     if "error" in result:
         logger.exception(result["error"])
-        api_exception(status_code=code, error_message=result['message'])
+        return api_exception(status_code=code, message=result['message'], error=result['error'])
     else:
         return api_response(result, code)
 
@@ -111,7 +136,7 @@ def next_night(exiled: str, request: Request):
 
     if "error" in result:
         logger.exception(result["error"])
-        api_exception(status_code=code, error_message=result['message'])
+        return api_exception(status_code=code, message=result['message'], error=result['error'])
     else:
         return api_response(result, code)
 
