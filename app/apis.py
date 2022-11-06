@@ -54,12 +54,10 @@ def reset():
         return api_response(result, code)
 
 
-@router.get('/sit/{seat}')
-def set_player(seat: int, request: Request):
-    ip = request.client.host
-    print(ip)
+@router.get('/sit/{seat}/{name}')
+def set_player(seat: int, name: str):
 
-    (code, result) = game.set_player(seat, ip)
+    (code, result) = game.set_player(seat, name)
 
     if "error" in result:
         logger.exception(result["error"])
@@ -68,11 +66,10 @@ def set_player(seat: int, request: Request):
         return api_response(result, code)
 
 
-@router.get('/role')
-def get_role(request: Request):
-    ip = request.client.host
+@router.get('/role/{name}')
+def get_role(name: str):
 
-    (code, result) = game.get_role(ip)
+    (code, result) = game.get_role(name)
 
     if "error" in result:
         logger.exception(result["error"])
@@ -92,11 +89,10 @@ def start_game():
         return api_response(result, code)
 
 
-@router.get('/pre_ability')
-def pre_check(request: Request):
-    ip = request.client.host
+@router.get('/pre_ability/{name}')
+def pre_check(name: str):
 
-    (code, result) = game.pre_check(ip)
+    (code, result) = game.pre_check(name)
 
     if "error" in result:
         logger.exception(result["error"])

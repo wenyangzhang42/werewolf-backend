@@ -37,28 +37,29 @@ def reset_game():
     return 200, {"message": "Successfully cleared game settings."}
 
 
-def set_player(seat: int, ip: str):
+def set_player(seat: int, name: str):
     try:
-        gi.set_player(seat, ip)
+        gi.set_player(seat, name)
     except Exception as e:
         logger.error(f"Error setting player, Error: {e}")
         return 500, {"message": "Error setting player!", "error": str(e)}
 
-    logger.info(f"player {ip} sit on seat {seat}")
+    logger.info(f"player {name} sit on seat {seat}")
     return 200, {"message": f"You sit on seat {seat}!"}
 
 
-def get_role(ip: str):
+def get_role(name: str):
     try:
-        temp_role = gi.get_role(ip)
+        temp_role = gi.get_role(name)
     except Exception as e:
         return 404, {"message": "Error getting role!", "error": str(e)}
 
     return 200, {"message": f"Your role is {temp_role}"}
 
-def pre_check(ip: str):
+
+def pre_check(name: str):
     try:
-        check_result = gi.pre_ability_check(ip)
+        check_result = gi.pre_ability_check(name)
     except Exception as e:
         print(e)
         return 404, {"message": "Error using ability!", "error": str(e)}

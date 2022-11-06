@@ -1,19 +1,19 @@
 class Player:
-    ip: str
+    name: str
     seat: int
     role: str
     alignment: str
     status: str
 
-    def __init__(self, ip: str, seat: int, role: str, alignment: str):
-        self.ip = ip
+    def __init__(self, name: str, seat: int, role: str, alignment: str):
+        self.name = name
         self.seat = seat
         self.role = role
         self.alignment = alignment
         self.status = "alive"
 
     def __str__(self):
-        return self.ip + ", seat: " + self.seat + ", role: " + \
+        return self.name + ", seat: " + self.seat + ", role: " + \
                self.role + ", alignment: " + self.alignment + ", status: " + self.status
 
     def set_role(self, role: str):

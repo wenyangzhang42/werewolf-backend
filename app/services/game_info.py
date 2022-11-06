@@ -98,13 +98,16 @@ def reset() -> None:
     logger.debug("Game successfully reset.")
 
 
-def set_player(seat: int, ip: str) -> None:
+def set_player(seat: int, name: str) -> None:
     if not game_is_configured():
         raise Exception("game is not configured!")
 
+    if name == 'please enter a name':
+        raise Exception("you must enter a nickname!")
+
     global game_info
 
-    current_player = find_player(ip)
+    current_player = find_player(name)
     if current_player is not None:
         raise Exception(f"You have already sit on seat {current_player.seat}! ")
 
@@ -115,15 +118,15 @@ def set_player(seat: int, ip: str) -> None:
         else:
             role = game_info.get('roles')[seat - 1]
             alignment = find_alignment(role)
-            player = Player(ip, seat, role, alignment)
+            player = Player(name, seat, role, alignment)
             temp_players[seat-1] = player
-            logger.debug("Player " + ip + " seated at seat " + str(seat))
+            logger.debug("Player " + name + " seated at seat " + str(seat))
     except Exception as e:
-        raise Exception(f"Unknown error set player {ip} at seat {seat}. exception: {e}")
+        raise Exception(f"Error set player {name} at seat {seat}. exception: {e}")
 
 
-def get_role(ip: str):
-    player = find_player(ip)
+def get_role(name: str):
+    player = find_player(name)
     if player is None:
         raise Exception("You have not seated yet!")
     else:
@@ -147,11 +150,11 @@ def start_game() -> str:
     return move_to_next_stage()
 
 
-def pre_ability_check(ip: str):
+def pre_ability_check(name: str):
     if not game_is_configured():
         raise Exception("game is not configured!")
 
-    player = find_player(ip)
+    player = find_player(name)
 
     if player is None:
         raise Exception("You are not seated.")
@@ -236,10 +239,10 @@ def get_night_info():
 
 
 # Helper functions
-def find_player(ip: str):
+def find_player(name: str):
     global game_info
     for player in game_info.get("players"):
-        if player is not None and player.ip == ip:
+        if player is not None and player.name == name:
             return player
     return None
 
